@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DigiLib ITSNU - Final Version</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #27ae60;
+            --primary-dark: #1e8449;
+            --admin-color: #2980b9;
+            --dark: #2c3e50;
+            --light: #ffffff;
+            --bg: #f4f7f6;
+            --shadow: 0 4px 20px rgba(0,0,0,0.08);
+            --danger: #e74c3c;
+            --warning: #f39c12;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background-color: var(--bg); color: var(--dark); overflow-x: hidden; }
+        .hidden { display: none !important; }
+
+        /* --- LOGIN SECTION --- */
+        .login-page {
+            height: 100vh; display: flex; align-items: center; justify-content: center;
+            background: linear-gradient(135deg, #27ae60 0%, #2c3e50 100%);
+        }
+        .login-box {
+            background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            width: 95%; max-width: 400px; text-align: center;
+        }
+        .logo-login {
+            width: 70px; height: 70px; background: var(--primary); color: white; border-radius: 18px;
+            display: flex; align-items: center; justify-content: center; font-size: 2rem;
+            margin: 0 auto 15px; transform: rotate(-10deg);
+        }
+        .input-group { margin-bottom: 15px; text-align: left; }
+        label { font-size: 0.75rem; font-weight: 600; color: #7f8c8d; }
+        input { width: 100%; padding: 12px; margin-top: 5px; border: 1.5px solid #eee; border-radius: 10px; outline: none; }
+        input:focus { border-color: var(--primary); }
+        .btn-main { 
+            width: 100%; padding: 14px; background: var(--primary); border: none; color: white; 
+            font-weight: bold; border-radius: 10px; cursor: pointer; transition: 0.3s; 
+        }
+        .btn-main:hover { background: var(--primary-dark); transform: translateY(-2px); }
+        .help-text { font-size: 0.75rem; color: #95a5a6; margin-top: 15px; cursor: pointer; text-decoration: underline; }
+
+        /* --- HEADER & NAV --- */
+        header { 
+            background: white; padding: 15px 5%; box-shadow: var(--shadow); 
+            display: flex; justify-content: space-between; align-items: center; 
+            position: sticky; top:0; z-index: 100; 
+        }
+        .logo-nav { font-weight: 700; font-size: 1.4rem; color: var(--primary); display: flex; align-items: center; gap: 10px; }
+        nav ul { display: flex; list-style: none; gap: 8px; }
+        nav a { 
+            text-decoration: none; color: #7f8c8d; font-size: 0.8rem; font-weight: 600; 
+            cursor: pointer; padding: 10px 14px; border-radius: 10px; transition: 0.2s; 
+        }
+        nav a:hover, nav a.active { color: var(--primary); background: #ebf5ee; }
+        nav a.admin-active { color: var(--admin-color) !important; background: #eaf2f8 !important; }
+
+        /* --- CONTENT --- */
+        .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px; }
+        .card { background: white; padding: 20px; border-radius: 15px; box-shadow: var(--shadow); border: 1px solid #f0f0f0; }
+        
+        .stat-val { font-size: 2.5rem; font-weight: 700; color: var(--primary); margin: 5px 0; }
+        .admin-theme .stat-val { color: var(--admin-color); }
+        .admin-theme .btn-main { background: var(--admin-color); }
+        .admin-theme .logo-nav { color: var(--admin-color); }
+
+        /* BOOK STYLING */
+        .book-img { 
+            width: 100%; height: 140px; background: #f8f9fa; border-radius: 10px; 
+            margin-bottom: 12px; display: flex; align-items: center; justify-content: center; 
+            color: #ecf0f1; font-size: 3rem; position: relative;
+        }
+        .status-badge { 
+            display: inline-block; padding: 4px 10px; border-radius: 6px; 
+            font-size: 0.65rem; font-weight: 700; margin-bottom: 8px; 
+        }
+        .avail { background: #e8f5e9; color: #27ae60; }
+        .borrowed { background: #fdedec; color: #e74c3c; }
+
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 15px; text-align: left; border-bottom: 1px solid #f0f0f0; font-size: 0.85rem; }
+        th { color: #95a5a6; font-weight: 600; text-transform: uppercase; font-size: 0.7rem; }
+
+        @media (max-width: 768px) {
+            header { flex-direction: column; gap: 10px; }
+            nav ul { flex-wrap: wrap; justify-content: center; }
+        }
+    </style>
+</head>
+<body id="bodyTag">
+
+    <div id="loginPage" class="login-page">
+        <div class="login-box">
+            <div class="logo-login"><i class="fas fa-layer-group"></i></div>
+            <h2 style="color: var(--dark);">E-Library ITSNU</h2>
+            <p style="font-size: 0.8rem; margin-bottom: 25px; color: #95a5a6;">Saintek Digital Repository</p>
+            
+            <div class="input-group">
+                <label>Username / NIM</label>
+                <input type="text" id="userInput" placeholder="Masukkan ID">
+            </div>
+            <div class="input-group">
+                <label>Password (Min. 8 Karakter)</label>
+                <input type="password" id="passInput" placeholder="********">
+            </div>
+            <button class="btn-main" id="loginBtn" onclick="handleAuth()">LOGIN SEKARANG</button>
+            
+            <p class="help-text" onclick="alert('Bantuan:\nAdmin: adminperpus1 / adminperpus2 / adminperpus3\nMahasiswa: Masukkan NIM Prodi\nPassword: Ikuti Username/NIM (Min 8 Karakter)')">
+                Kesulitan masuk? Klik di sini
+            </p>
+        </div>
+    </div>
+
+    <div id="mainApp" class="hidden">
+        <header>
+            <div class="logo-nav"><i class="fas fa-scroll"></i> <span>ITSNU <small style="font-weight: 400; color:#95a5a6;">PERPUS</small></span></div>
+            <nav><ul id="navLinks"></ul></nav>
+        </header>
+
+        <div class="container">
+            <div id="view-dashboard" class="page-view">
+                <div class="card" style="margin-bottom: 25px; border-left: 5px solid var(--primary);" id="dashHeader">
+                    <h2 id="welcomeText">Halo!</h2>
+                    <p id="subWelcome" style="color: #7f8c8d;"></p>
+                </div>
+                <div class="grid" id="statsGrid"></div>
+                <h3 style="margin-top: 30px; margin-bottom: 15px;">Daftar Transaksi</h3>
+                <div class="card" style="padding:0; overflow-x: auto;">
+                    <table>
+                        <thead id="tableHead"></thead>
+                        <tbody id="tableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="view-katalog" class="page-view hidden">
+                <div style="margin-bottom: 20px;">
+                    <h2>Katalog Koleksi Lengkap</h2>
+                    <p style="color:#95a5a6;">Pilih buku sesuai konsentrasi Program Studi Anda.</p>
+                </div>
+                <div class="grid" id="catalog-grid"></div>
+            </div>
+
+            <div id="view-kembali" class="page-view hidden">
+                <h2>Pengembalian Buku</h2>
+                <div id="return-grid" class="grid" style="margin-top: 20px;"></div>
+            </div>
+
+            <div id="view-profil" class="page-view hidden">
+                <div class="card" style="max-width: 500px; margin: 0 auto; text-align: center;">
+                    <i class="fas fa-user-circle" style="font-size: 5rem; color: #ddd; margin-bottom: 15px;"></i>
+                    <h2 id="prof-name"></h2>
+                    <p id="prof-role" style="color: var(--primary); font-weight: 600;"></p>
+                    <p id="prof-id" style="color: #95a5a6; font-size: 0.8rem;"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let userMode = 'student';
+        let myBorrowed = [];
+        
+        // --- DATABASE BUKU (30+ DATA) ---
+        const books = [
+            { id: 1, title: "Algoritma Pemrograman", author: "Rinaldi Munir", cat: "Informatika", status: "avail" },
+            { id: 2, title: "Basis Data", author: "Fathansyah", status: "avail", cat: "TI" },
+            { id: 3, title: "Fisika Dasar I", author: "Halliday", status: "avail", cat: "Fisika" },
+            { id: 4, title: "Manajemen Industri", author: "Hani Handoko", status: "avail", cat: "Industri" },
+            { id: 5, title: "Web Developer Pro", author: "Prawito Hudoro", status: "avail", cat: "TI" },
+            { id: 6, title: "Keamanan Jaringan", author: "Onno W. Purbo", status: "avail", cat: "Informatika" },
+            { id: 7, title: "Termodinamika", author: "Yunus Cengel", status: "avail", cat: "Fisika" },
+            { id: 8, title: "Tata Letak Pabrik", author: "Sritomo", status: "avail", cat: "Industri" },
+            { id: 9, title: "Machine Learning", author: "Andrew Ng", status: "avail", cat: "Informatika" },
+            { id: 10, title: "UI/UX Design Master", author: "Steve Krug", status: "avail", cat: "TI" },
+            { id: 11, title: "Mekanika Teknik", author: "Hibbeler", status: "avail", cat: "Fisika" },
+            { id: 12, title: "Ergonomi Kerja", author: "Tarwaka", status: "avail", cat: "Industri" },
+            { id: 13, title: "Mobile App Flutter", author: "Angela Yu", status: "avail", cat: "TI" },
+            { id: 14, title: "Sistem Operasi", author: "Tanenbaum", status: "avail", cat: "Informatika" },
+            { id: 15, title: "Kalkulus Lanjut", author: "Varberg", status: "avail", cat: "Umum" },
+            { id: 16, title: "Logika Informatika", author: "Suprapto", status: "avail", cat: "Informatika" },
+            { id: 17, title: "Jaringan Komputer", author: "Forouzan", status: "avail", cat: "TI" },
+            { id: 18, title: "Fisika Modern", author: "Krane", status: "avail", cat: "Fisika" },
+            { id: 19, title: "Ekonomi Teknik", author: "DeGarmo", status: "avail", cat: "Industri" },
+            { id: 20, title: "Clean Code", author: "Robert Martin", status: "avail", cat: "Informatika" },
+            { id: 21, title: "React JS Fundamental", author: "Robin W.", status: "avail", cat: "TI" },
+            { id: 22, title: "Elektronika Dasar", author: "Malvino", status: "avail", cat: "Fisika" },
+            { id: 23, title: "Statistika Industri", author: "Walpole", status: "avail", cat: "Industri" },
+            { id: 24, title: "Cyber Security", author: "Kevin Mitnick", status: "avail", cat: "Informatika" },
+            { id: 25, title: "Cloud Computing", author: "Buyya", status: "avail", cat: "TI" },
+            { id: 26, title: "Astronomi Dasar", author: "Bambang H.", status: "avail", cat: "Fisika" },
+            { id: 27, title: "Otomasi Industri", author: "Groover", status: "avail", cat: "Industri" },
+            { id: 28, title: "Data Mining", author: "Han", status: "avail", cat: "Informatika" },
+            { id: 29, title: "Metodologi Penelitian", author: "Sugiyono", status: "avail", cat: "Umum" },
+            { id: 30, title: "Kewirausahaan IT", author: "Ciputra", status: "avail", cat: "Umum" }
+        ];
+
+        // --- AUTH ---
+        function handleAuth() {
+            const user = document.getElementById('userInput').value;
+            const pass = document.getElementById('passInput').value;
+
+            if(pass.length < 8) return alert("Password minimal 8 karakter!");
+
+            // Admin Logic
+            const admins = ['adminperpus1', 'adminperpus2', 'adminperpus3'];
+            if(admins.includes(user) && pass === user) {
+                userMode = 'admin';
+                userData = { name: "Staf Perpus (" + user + ")", id: user.toUpperCase(), role: "Administrator" };
+                return startApp();
+            }
+
+            // Student Logic
+            if(user.startsWith("10124") || user.startsWith("101224") || user.startsWith("20424") || user.startsWith("10324")) {
+                userMode = 'student';
+                let p = "Teknologi Informasi";
+                if(user.startsWith("101224")) p = "Informatika";
+                if(user.startsWith("20424")) p = "Fisika";
+                if(user.startsWith("10324")) p = "Teknik Industri";
+                userData = { name: "Mahasiswa ITSNU", id: user, role: p };
+                return startApp();
+            }
+
+            alert("Username/Password tidak sesuai ketentuan!");
+        }
+
+        function startApp() {
+            document.getElementById('loginPage').classList.add('hidden');
+            document.getElementById('mainApp').classList.remove('hidden');
+            if(userMode === 'admin') {
+                document.getElementById('bodyTag').classList.add('admin-theme');
+                document.getElementById('dashHeader').style.borderLeftColor = 'var(--admin-color)';
+            }
+            
+            renderNav();
+            document.getElementById('welcomeText').innerText = `Halo, ${userData.name}!`;
+            document.getElementById('subWelcome').innerText = `ID: ${userData.id} | ${userData.role}`;
+            document.getElementById('prof-name').innerText = userData.name;
+            document.getElementById('prof-role').innerText = userData.role;
+            document.getElementById('prof-id').innerText = "ID: " + userData.id;
+
+            navigate('dashboard');
+        }
+
+        function renderNav() {
+            const nav = document.getElementById('navLinks');
+            const cls = userMode === 'admin' ? 'admin-active' : 'active';
+            if(userMode === 'admin') {
+                nav.innerHTML = `
+                    <li><a onclick="navigate('dashboard')" id="n-dashboard" class="${cls}"><i class="fas fa-chart-pie"></i> Panel</a></li>
+                    <li><a onclick="navigate('katalog')" id="n-katalog"><i class="fas fa-tasks"></i> Buku</a></li>
+                    <li><a onclick="location.reload()" style="color:var(--danger)"><i class="fas fa-power-off"></i></a></li>
+                `;
+            } else {
+                nav.innerHTML = `
+                    <li><a onclick="navigate('dashboard')" id="n-dashboard" class="${cls}"><i class="fas fa-home"></i> Beranda</a></li>
+                    <li><a onclick="navigate('katalog')" id="n-katalog"><i class="fas fa-book"></i> Katalog</a></li>
+                    <li><a onclick="navigate('kembali')" id="n-kembali"><i class="fas fa-undo"></i> Kembali</a></li>
+                    <li><a onclick="navigate('profil')" id="n-profil"><i class="fas fa-user"></i> Profil</a></li>
+                    <li><a onclick="location.reload()" style="color:var(--danger)"><i class="fas fa-power-off"></i></a></li>
+                `;
+            }
+        }
+
+        function navigate(v) {
+            document.querySelectorAll('.page-view').forEach(p => p.classList.add('hidden'));
+            document.querySelectorAll('nav a').forEach(a => a.classList.remove('active', 'admin-active'));
+            document.getElementById('view-'+v).classList.remove('hidden');
+            document.getElementById('n-'+v).classList.add(userMode==='admin'?'admin-active':'active');
+            
+            if(v === 'dashboard') renderDash();
+            if(v === 'katalog') renderKatalog();
+            if(v === 'kembali') renderKembali();
+        }
+
+        function renderDash() {
+            const sg = document.getElementById('statsGrid');
+            const tb = document.getElementById('tableBody');
+            const th = document.getElementById('tableHead');
+
+            if(userMode === 'admin') {
+                sg.innerHTML = `<div class="card"><p>Total Buku</p><div class="stat-val">1.240</div></div>
+                                <div class="card"><p>Peminjaman Aktif</p><div class="stat-val">84</div></div>
+                                <div class="card"><p>Member Aktif</p><div class="stat-val">412</div></div>`;
+                th.innerHTML = `<tr><th>NIM/ID</th><th>Buku</th><th>Status</th></tr>`;
+                tb.innerHTML = `<tr><td>10124005</td><td>Algoritma Pemrograman</td><td><span class="status-badge borrowed">Pinjam</span></td></tr>
+                                <tr><td>10324011</td><td>Manajemen Industri</td><td><span class="status-badge borrowed">Pinjam</span></td></tr>`;
+            } else {
+                sg.innerHTML = `<div class="card"><p>Buku Dipinjam</p><div class="stat-val">${myBorrowed.length}</div></div>
+                                <div class="card"><p>Koleksi Tersedia</p><div class="stat-val">${books.length}</div></div>
+                                <div class="card"><p>Denda</p><div class="stat-val" style="color:var(--danger)">Rp 0</div></div>`;
+                th.innerHTML = `<tr><th>Judul Buku</th><th>Tgl Pinjam</th><th>Sisa Hari</th></tr>`;
+                tb.innerHTML = myBorrowed.length ? '' : '<tr><td colspan="3" style="text-align:center">Kosong</td></tr>';
+                myBorrowed.forEach(b => {
+                    tb.innerHTML += `<tr><td>${b.title}</td><td>${new Date().toLocaleDateString()}</td><td>7 Hari</td></tr>`;
+                });
+            }
+        }
+
+        function renderKatalog() {
+            const c = document.getElementById('catalog-grid');
+            c.innerHTML = '';
+            books.forEach(b => {
+                const isAvail = b.status === 'avail';
+                c.innerHTML += `<div class="card">
+                    <div class="book-img" style="color:${userMode==='admin'?'#dcecf7':'#ecf9f0'}"><i class="fas fa-book"></i></div>
+                    <span class="status-badge ${isAvail?'avail':'borrowed'}">${isAvail?'Tersedia':'Dipinjam'}</span>
+                    <h4 style="font-size:0.9rem">${b.title}</h4>
+                    <p style="font-size:0.7rem; color:#95a5a6">Prodi: ${b.cat}</p>
+                    <button class="btn-main" style="margin-top:10px; padding:8px; font-size:0.75rem; background:${isAvail?'':'#ccc'}" 
+                    onclick="pinjam(${b.id})" ${isAvail?'':'disabled'}>${userMode==='admin'?'Edit':'Pinjam'}</button>
+                </div>`;
+            });
+        }
+
+        function pinjam(id) {
+            if(userMode==='admin') return alert("Admin: Fitur edit dalam pengembangan.");
+            const b = books.find(x => x.id === id);
+            b.status = 'borrowed';
+            myBorrowed.push(b);
+            alert("Buku berhasil dipinjam!");
+            navigate('dashboard');
+        }
+
+        function renderKembali() {
+            const r = document.getElementById('return-grid');
+            r.innerHTML = myBorrowed.length ? '' : '<p>Tidak ada pinjaman.</p>';
+            myBorrowed.forEach((b, i) => {
+                r.innerHTML += `<div class="card" style="border-top:4px solid var(--warning)">
+                    <h4>${b.title}</h4>
+                    <button class="btn-main" style="background:var(--warning); margin-top:10px;" onclick="kembali(${i})">Kembalikan</button>
+                </div>`;
+            });
+        }
+
+        function kembali(i) {
+            myBorrowed[i].status = 'avail';
+            myBorrowed.splice(i, 1);
+            alert("Buku dikembalikan!");
+            navigate('kembali');
+        }
+    </script>
+</body>
+</html>
